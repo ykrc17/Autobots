@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.71"
+    }
+}
+
+apply plugin: "kotlin"
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    implementation([
+            // gradle内置了kotlin，这行其实不必要
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    ])
+
+    compileOnly([
+            gradleApi(),
+            "com.android.tools.build:gradle:2.3.3"
+    ])
+}
+
+def pluginId = "autobots"
+def pluginClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
+
+jar {
+    metaInf {
+        def tmpDir = file("$buildDir/tmp/META-INF")
+        doFirst {
+            file("$tmpDir/gradle-plugins/${pluginId}.properties").with {
+                parentFile.mkdirs()
+                write("implementation-class=${pluginClass}")
+            }
+        }
+        from tmpDir
+        doLast {
+            delete tmpDir
+        }
+    }
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
