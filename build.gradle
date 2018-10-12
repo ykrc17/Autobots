@@ -6,10 +6,12 @@ buildscript {
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.71"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
     }
 }
 
 apply plugin: "kotlin"
+apply plugin: "com.github.johnrengelman.shadow"
 
 repositories {
     mavenCentral()
@@ -18,18 +20,15 @@ repositories {
 
 dependencies {
     implementation([
-            // gradle内置了kotlin，这行其实不必要
-            "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+            "org.javassist:javassist:3.23.1-GA",
     ])
 
     compileOnly([
             gradleApi(),
             "com.android.tools.build:gradle:2.3.3",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8",
     ])
 }
-
-def pluginId = "autobots"
-def pluginClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
 
 /**
  *              gradle 3.0  kotlin 1.1
@@ -45,7 +44,11 @@ compileKotlin {
     }
 }
 
-jar {
+def pluginId = "autobots"
+def pluginClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
+
+shadowJar {
+    classifier = null
     metaInf {
         def tmpDir = file("$buildDir/tmp/META-INF")
         doFirst {

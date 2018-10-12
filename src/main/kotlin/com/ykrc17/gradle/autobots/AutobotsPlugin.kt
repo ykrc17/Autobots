@@ -16,7 +16,7 @@ class AutobotsPlugin : Plugin<Project> {
         if (plugin != null) {
             log("Plugin found: \"com.android.application:${Version.ANDROID_GRADLE_PLUGIN_VERSION}\"")
             if (checkAPVersion()) {
-                extensions.getByType(AppExtension::class.java).registerTransform(AutobotsTransform())
+                extensions.getByType(AppExtension::class.java).registerTransform(AutobotsTransform(target))
             } else {
                 log("Minimum supported Android Gradle Plugin version is $MIN_AP_VERSION")
             }
