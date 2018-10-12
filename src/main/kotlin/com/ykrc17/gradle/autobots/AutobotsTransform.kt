@@ -37,6 +37,6 @@ class AutobotsTransform : Transform() {
         println("""> autobots transform finished:
     spent time: ${System.currentTimeMillis() - startTime}
     transformed dir: $dirCount
-    transformed jar: $jarCount"""")
+    transformed jar: $jarCount""")
     }
 }
