@@ -1,11 +1,13 @@
 buildscript {
+    ext.kotlin_version = "1.2.71"
+
     repositories {
         mavenCentral()
         jcenter()
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.71"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
         classpath files("meta-plugin.jar")
     }
@@ -27,7 +29,7 @@ dependencies {
 
     compileOnly([
             "com.android.tools.build:gradle:2.3.3",
-            "org.jetbrains.kotlin:kotlin-stdlib",
+            "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
     ])
 }
 
@@ -46,8 +48,14 @@ compileKotlin {
 }
 
 metaPlugin {
-    id = "autobots"
-    implClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
+    plugin {
+        id = "autobots"
+        implClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
+    }
+    plugin {
+        id = "com.ykrc17.autobots"
+        implClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
+    }
 }
 
 shadowJar {
