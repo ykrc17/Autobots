@@ -1,21 +1,18 @@
 package com.ykrc17.gradle.autobots.processor
 
-import com.android.build.api.transform.Format
-import com.android.build.api.transform.JarInput
-import com.android.build.api.transform.TransformInvocation
-import com.android.utils.FileUtils
+import org.apache.commons.io.IOUtils
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 
-class JarProcessor(transformInvocation: TransformInvocation) : AbstractProcessor<JarInput>(transformInvocation) {
-    var jarCount = 0
-
-    override fun process(input: JarInput) {
-        val jarOutput = outputProvider.getContentLocation(input.name, input.contentTypes, input.scopes, Format.JAR)
-        FileUtils.copyFile(input.file, jarOutput)
-//                println("${it.file} to ${jarOutput}")
-        jarCount++
+class JarProcessor(val inJar: ZipFile) : AbstractProcessor<ZipEntry, ZipOutputStream>() {
+    override fun shouldProcess(input: ZipEntry): Boolean {
+        return true
     }
 
-    override fun onFinish() {
-        println("\ttransformed jar: $jarCount")
+    override fun process(input: ZipEntry, output: ZipOutputStream) {
+        output.putNextEntry(input)
+        IOUtils.copy(inJar.getInputStream(input), output)
+        output.closeEntry()
     }
 }

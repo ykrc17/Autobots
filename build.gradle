@@ -60,6 +60,11 @@ metaPlugin {
 
 shadowJar {
     classifier = null
+    System.getProperty("os.name").with {
+        if (it.startsWith("Mac")) {
+            doLast { exec { commandLine "open", "$buildDir/libs" } }
+        }
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8

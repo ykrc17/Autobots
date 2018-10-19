@@ -26,16 +26,10 @@ class ClassEditor {
 
     fun read(inputStream: InputStream, onRequireWrite: CtClass.() -> Unit) {
         val ctClass = pool.makeClass(inputStream)
-        ctClass.refClasses
         ctClass.declaredMethods.forEach {
-            println(it.name)
-        }
-        ctClass.declaredMethods.find { it.name == "toast" }?.also {
-        }
-        ctClass.declaredMethods.find { it.name == "onCreate" }?.also {
             it.addLocalVariable("ttttt", CtClass.longType)
             it.insertBefore("ttttt = System.currentTimeMillis();")
-            it.insertAfter("android.util.Log.d(\"Autobots\",\"${it.name}\" + (System.currentTimeMillis() - ttttt) + \"ms\");")
+            it.insertAfter("android.util.Log.d(\"Autobots\",\"${it.name} \" + (System.currentTimeMillis() - ttttt) + \"ms\");")
         }
         onRequireWrite(ctClass)
         ctClass.detach()
