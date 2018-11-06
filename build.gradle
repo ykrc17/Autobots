@@ -49,12 +49,12 @@ compileKotlin {
 
 metaPlugin {
     plugin {
-        id = "autobots"
-        implClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
+        id = "clew"
+        implClass = "com.ykrc17.gradle.clew.ClewPlugin"
     }
     plugin {
-        id = "com.ykrc17.autobots"
-        implClass = "com.ykrc17.gradle.autobots.AutobotsPlugin"
+        id = "com.ykrc17.clew"
+        implClass = "com.ykrc17.gradle.clew.ClewPlugin"
     }
 }
 

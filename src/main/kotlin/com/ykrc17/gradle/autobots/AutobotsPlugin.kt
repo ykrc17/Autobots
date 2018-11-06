@@ -3,6 +3,7 @@ package com.ykrc17.gradle.autobots
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.android.builder.model.Version
+import com.ykrc17.gradle.ext.findPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -19,10 +20,10 @@ abstract class AutobotsPlugin : Plugin<Project> {
 
     open fun getMinAndroidPluginVersion(): String = MIN_AP_VERSION
 
-    abstract fun getTransformConfig(target: Project): TransformConfig
+    abstract fun getTransformConfig(target: Project): TransformerConfig
 
     private fun validateAndroidPlugin(target: Project) {
-        target.plugins.findPlugin(AppPlugin::class.java)
+        target.plugins.findPlugin<AppPlugin>()
                 ?: error("Plugin \"com.android.application\" not found in project \"${target.path}\"")
         println("Plugin found: \"com.android.application:${Version.ANDROID_GRADLE_PLUGIN_VERSION}\"")
 

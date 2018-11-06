@@ -5,7 +5,7 @@ import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipOutputStream
 
-interface TransformConfig {
+interface Transformer {
     fun beforeTraverse(input: TransformInput)
 
     fun shouldProcessClass(className: String): Boolean

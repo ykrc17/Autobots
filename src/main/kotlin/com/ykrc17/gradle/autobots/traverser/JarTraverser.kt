@@ -4,7 +4,7 @@ import com.android.build.api.transform.Format
 import com.android.build.api.transform.JarInput
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
-import com.ykrc17.gradle.autobots.TransformConfig
+import com.ykrc17.gradle.autobots.Transformer
 import com.ykrc17.gradle.autobots.processor.ZipEntryProcessor
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
-class JarTraverser(transformInvocation: TransformInvocation, val config: TransformConfig) : AbstractTraverser<JarInput>(transformInvocation.outputProvider) {
+class JarTraverser(transformInvocation: TransformInvocation, val transformer: Transformer) : AbstractTraverser<JarInput>(transformInvocation.outputProvider) {
     var totalTime = 0L
 
     override fun traverse(input: JarInput) {
@@ -27,7 +27,7 @@ class JarTraverser(transformInvocation: TransformInvocation, val config: Transfo
 
     private fun traverseCopyJar(jarInput: JarInput, outFile: File) {
         val inZip = ZipFile(jarInput.file)
-        val processor = ZipEntryProcessor(inZip, config)
+        val processor = ZipEntryProcessor(inZip, transformer)
         if (shouldProcess(processor, jarInput, inZip)) {
             println("> copying zip: ${jarInput.file.path}")
             copyJarEntries(processor, inZip, outFile)
@@ -39,6 +39,7 @@ class JarTraverser(transformInvocation: TransformInvocation, val config: Transfo
 
     private fun shouldProcess(processor: ZipEntryProcessor, jarInput: JarInput, inZip: ZipFile): Boolean {
         // 只修改项目中的jar
+        // TODO config配置
         if (jarInput.scopes.contains(QualifiedContent.Scope.EXTERNAL_LIBRARIES)) {
             return false
         }
