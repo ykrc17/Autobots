@@ -6,23 +6,28 @@ import com.android.builder.model.Version
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-const val MIN_AP_VERSION = "2.3"
+abstract class AutobotsPlugin : Plugin<Project> {
+    companion object CONSTANTS {
+        const val MIN_AP_VERSION = "2.3"
+    }
 
-@Suppress("unused")
-class AutobotsPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         println("> Autobots:")
         validateAndroidPlugin(target)
-        target.extensions.getByType(AppExtension::class.java).registerTransform(AutobotsTransform(target))
+        target.extensions.getByType(AppExtension::class.java).registerTransform(AutobotsTransform(getTransformConfig(target)))
     }
+
+    open fun getMinAndroidPluginVersion(): String = MIN_AP_VERSION
+
+    abstract fun getTransformConfig(target: Project): TransformConfig
 
     private fun validateAndroidPlugin(target: Project) {
         target.plugins.findPlugin(AppPlugin::class.java)
                 ?: error("Plugin \"com.android.application\" not found in project \"${target.path}\"")
         println("Plugin found: \"com.android.application:${Version.ANDROID_GRADLE_PLUGIN_VERSION}\"")
 
-        if (!compareVersion(MIN_AP_VERSION, Version.ANDROID_GRADLE_PLUGIN_VERSION)) {
-            error("Minimum supported Android Gradle Plugin version is $MIN_AP_VERSION")
+        if (!compareVersion(getMinAndroidPluginVersion(), Version.ANDROID_GRADLE_PLUGIN_VERSION)) {
+            error("Minimum supported Android Gradle Plugin version is ${getMinAndroidPluginVersion()}")
         }
     }
 

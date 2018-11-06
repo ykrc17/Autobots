@@ -4,6 +4,7 @@ import com.android.build.api.transform.Format
 import com.android.build.api.transform.JarInput
 import com.android.build.api.transform.QualifiedContent
 import com.android.build.api.transform.TransformInvocation
+import com.ykrc17.gradle.autobots.TransformConfig
 import com.ykrc17.gradle.autobots.processor.ZipEntryProcessor
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeUnit
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
-class JarTraverser(transformInvocation: TransformInvocation) : AbstractTraverser<JarInput>(transformInvocation.outputProvider) {
+class JarTraverser(transformInvocation: TransformInvocation, val config: TransformConfig) : AbstractTraverser<JarInput>(transformInvocation.outputProvider) {
     var totalTime = 0L
 
     override fun traverse(input: JarInput) {
@@ -26,7 +27,7 @@ class JarTraverser(transformInvocation: TransformInvocation) : AbstractTraverser
 
     private fun traverseCopyJar(jarInput: JarInput, outFile: File) {
         val inZip = ZipFile(jarInput.file)
-        val processor = ZipEntryProcessor(inZip)
+        val processor = ZipEntryProcessor(inZip, config)
         if (shouldProcess(processor, jarInput, inZip)) {
             println("> copying zip: ${jarInput.file.path}")
             copyJarEntries(processor, inZip, outFile)

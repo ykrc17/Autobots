@@ -4,22 +4,18 @@ import com.android.build.api.transform.DirectoryInput
 import com.android.build.api.transform.Format
 import com.android.build.api.transform.TransformInvocation
 import com.android.utils.FileUtils
-import com.ykrc17.gradle.autobots.edit.ClassEditor
+import com.ykrc17.gradle.autobots.TransformConfig
 import com.ykrc17.gradle.autobots.processor.ClassFileProcessor
 import java.io.File
 
-class DirTraverser(private val transformInvocation: TransformInvocation, val editor: ClassEditor) : AbstractTraverser<DirectoryInput>(transformInvocation.outputProvider) {
+class DirTraverser(transformInvocation: TransformInvocation, private val config: TransformConfig) : AbstractTraverser<DirectoryInput>(transformInvocation.outputProvider) {
 
     var dirCount = 0
 
     override fun traverse(input: DirectoryInput) {
         val inputDir = input.file
         val outputDir = outputProvider.getContentLocation(input.name, input.contentTypes, input.scopes, Format.DIRECTORY)
-        val processor = ClassFileProcessor(inputDir, outputDir, editor)
-        // 清理缓存
-        if (!transformInvocation.isIncremental) {
-            FileUtils.cleanOutputDir(outputDir)
-        }
+        val processor = ClassFileProcessor(inputDir, outputDir, config)
         traverseDirectory(processor, input.file, outputDir)
         dirCount++
     }

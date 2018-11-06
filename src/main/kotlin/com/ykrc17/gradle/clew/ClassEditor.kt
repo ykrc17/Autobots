@@ -1,4 +1,4 @@
-package com.ykrc17.gradle.autobots.edit
+package com.ykrc17.gradle.clew
 
 import com.android.build.gradle.AppExtension
 import javassist.ClassPool
