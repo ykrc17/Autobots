@@ -11,34 +11,31 @@ import java.io.File
 class DirTraverser(private val transformInvocation: TransformInvocation, val editor: ClassEditor) : AbstractTraverser<DirectoryInput>(transformInvocation.outputProvider) {
 
     var dirCount = 0
-    lateinit var inputDir: File
-    lateinit var outputDir: File
-    lateinit var processor: ClassFileProcessor
 
     override fun traverse(input: DirectoryInput) {
-        inputDir = input.file
-        outputDir = outputProvider.getContentLocation(input.name, input.contentTypes, input.scopes, Format.DIRECTORY)
-        processor = ClassFileProcessor(inputDir, outputDir, editor)
+        val inputDir = input.file
+        val outputDir = outputProvider.getContentLocation(input.name, input.contentTypes, input.scopes, Format.DIRECTORY)
+        val processor = ClassFileProcessor(inputDir, outputDir, editor)
         // 清理缓存
         if (!transformInvocation.isIncremental) {
             FileUtils.cleanOutputDir(outputDir)
         }
-        traverseDirectory(input.file, outputDir)
+        traverseDirectory(processor, input.file, outputDir)
         dirCount++
     }
 
-    private fun traverseDirectory(from: File, to: File) {
+    private fun traverseDirectory(processor: ClassFileProcessor, from: File, to: File) {
         FileUtils.mkdirs(to)
         from.listFiles()?.forEach { child ->
             if (child.isFile) {
-                traverseFile(child, File(to, child.name))
+                traverseFile(processor, child, File(to, child.name))
             } else if (child.isDirectory) {
-                traverseDirectory(child, File(to, child.name))
+                traverseDirectory(processor, child, File(to, child.name))
             }
         }
     }
 
-    private fun traverseFile(from: File, to: File) {
+    private fun traverseFile(processor: ClassFileProcessor, from: File, to: File) {
         if (processor.shouldProcess(from)) {
             processor.process(from, to)
         } else {

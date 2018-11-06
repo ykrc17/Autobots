@@ -10,40 +10,36 @@ const val MIN_AP_VERSION = "2.3"
 
 @Suppress("unused")
 class AutobotsPlugin : Plugin<Project> {
-    override fun apply(target: Project) = withProject(target) {
+    override fun apply(target: Project) {
         println("> Autobots:")
-        val plugin = plugins.findPlugin(AppPlugin::class.java)
-        if (plugin != null) {
-            log("Plugin found: \"com.android.application:${Version.ANDROID_GRADLE_PLUGIN_VERSION}\"")
-            if (checkAPVersion()) {
-                extensions.getByType(AppExtension::class.java).registerTransform(AutobotsTransform(target))
-            } else {
-                log("Minimum supported Android Gradle Plugin version is $MIN_AP_VERSION")
-            }
-        } else {
-            loge("Cannot find plugin: \"com.android.application\"")
-        }
-        println()
+        validateAndroidPlugin(target)
+        target.extensions.getByType(AppExtension::class.java).registerTransform(AutobotsTransform(target))
     }
 
-    private fun checkAPVersion(): Boolean {
-        val minVersion = MIN_AP_VERSION.split(".")
-        val currentVersion = Version.ANDROID_GRADLE_PLUGIN_VERSION.split(".")
-        for (i in 0 until minVersion.size) {
-            if (i >= currentVersion.size) {
+    private fun validateAndroidPlugin(target: Project) {
+        target.plugins.findPlugin(AppPlugin::class.java)
+                ?: error("Plugin \"com.android.application\" not found in project \"${target.path}\"")
+        println("Plugin found: \"com.android.application:${Version.ANDROID_GRADLE_PLUGIN_VERSION}\"")
+
+        if (!compareVersion(MIN_AP_VERSION, Version.ANDROID_GRADLE_PLUGIN_VERSION)) {
+            error("Minimum supported Android Gradle Plugin version is $MIN_AP_VERSION")
+        }
+    }
+
+    private fun compareVersion(minVersion: String, nowVersion: String): Boolean {
+        val minSplits = minVersion.split(".")
+        val nowSplits = nowVersion.split(".")
+        for (i in 0 until minSplits.size) {
+            if (i >= nowSplits.size) {
                 return false
             }
-            val m = minVersion[i].toInt()
-            val c = currentVersion[i].toInt()
+            val m = minSplits[i].toInt()
+            val c = nowSplits[i].toInt()
             when {
                 c > m -> return true
                 c < m -> return false
             }
         }
         return true
-    }
-
-    private inline fun withProject(project: Project, block: Project.() -> Unit) {
-        block(project)
     }
 }

@@ -29,7 +29,7 @@ class ClassEditor {
         ctClass.declaredMethods.forEach {
             it.addLocalVariable("ttttt", CtClass.longType)
             it.insertBefore("ttttt = System.currentTimeMillis();")
-            it.insertAfter("android.util.Log.d(\"Autobots\",\"${it.name} \" + (System.currentTimeMillis() - ttttt) + \"ms\");")
+            it.insertAfter("android.util.Log.d(\"Autobots\",\"${it.longName} \" + (System.currentTimeMillis() - ttttt) + \"ms\");")
         }
         onRequireWrite(ctClass)
         ctClass.detach()

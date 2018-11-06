@@ -17,7 +17,7 @@ class ClassFileProcessor(val inputDir: File, val outputDir: File, val editor: Cl
 
     override fun process(input: File, output: File) {
         editor.read(input.inputStream()) {
-            // TODO 去除outputDir
+            // TODO 直接使用output，而不是outputDir
             writeFile(outputDir.absolutePath)
         }
     }

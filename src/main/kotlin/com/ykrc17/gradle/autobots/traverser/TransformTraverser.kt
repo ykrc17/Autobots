@@ -16,12 +16,12 @@ class TransformTraverser(target: Project, val transformInvocation: TransformInvo
 
         // 处理
         input.directoryInputs.forEach(DirTraverser(transformInvocation, editor)::traverse)
-        input.jarInputs.forEach(JarTraverser(transformInvocation, editor)::traverse)
+        input.jarInputs.forEach(JarTraverser(transformInvocation)::traverse)
     }
 
     override fun onFinish() {
         println("> autobots transform finished:")
-        println("\tspent time: ${System.currentTimeMillis() - startTime}")
+        println("\tspent time: %,dms".format(System.currentTimeMillis() - startTime))
     }
 
 }
